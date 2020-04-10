@@ -9,7 +9,7 @@ Automated Web-Scraping Client for Ruby
 
 **A sample parser file, let's call it `parser.br`:**
 
-```sdl
+```sdl2
 //------------------------------------
 // Wikipedia scraper
 // for Country pages
