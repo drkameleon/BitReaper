@@ -13,6 +13,8 @@
 
 require 'colorize'
 require 'optparse'
+require 'parallel'
+require 'ruby-progressbar'
 
 require 'bitreaper'
 
@@ -26,6 +28,7 @@ $url 		= ""
 $inputFile 	= ""
 $outputFile = "output.json"
 
+$parallel   = false
 $verbose	= false
 
 # Parse command-line options
@@ -38,7 +41,8 @@ ARGV.options do |opts|
   	opts.on("-iINPUT", "--input==INPUT",String,"Set input file") 	{|val| $inputFile = val }
   	opts.on("-oOUTPUT", "--output=OUTPUT",String,"Set output file") {|val| $outputFile = val }
   	opts.on("-uURL", "--url=URL",String,"Set single url input") 	{|val| $url = val }
-  	opts.on("-v", "--verbose", String, "Print debug messages")   	{|val| $verbose = true }
+  	opts.on("-p", "--parallel", "Perform multi-threaded processing"){|val| $parallel = true }
+  	opts.on("-v", "--verbose", "Print debug messages")   			{|val| $verbose = true }
   	opts.on_tail("-h", "--help","Show this help page")         		{ 
   		puts opts
   		puts ""
@@ -82,10 +86,24 @@ if $inputFile!=""
 
 	# Process project
 	$store = []
-	$urls.each_with_index{|url,i|
-		br = BitReaper.new(url,$parser,i)
-		$store << br.process()
-	}
+	if not $parallel
+		$urls.each_with_index{|url,i|
+			br = BitReaper.new(url,$parser,i)
+			$store << br.process()
+		}
+	else
+		if not $verbose	
+			Parallel.each_with_index($urls, in_threads: 4, progress: " ► Processing... "){|url,i|
+				br = BitReaper.new(url,$parser,i)
+				$store << br.process()
+			}
+		else
+			Parallel.each_with_index($urls, in_threads: 4){|url,i|
+				br = BitReaper.new(url,$parser,i)
+				$store << br.process()
+			}
+		end
+	end
 
 	# Save store to file
 	saveStoreToFile($outputFile,$store)
