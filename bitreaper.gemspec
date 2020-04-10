@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.summary     = "BitReaper"
   s.description = "Automated Web-Scraping Client for Ruby"
   s.authors     = ["Dr.Kameleon"]
-  s.email       = 'yaniszaf@gmail.com'
+  s.email       = 'drkameleon@gmail.com'
   s.files       = [
     "bin/bitreaper",
     "lib/bitreaper.rb",
