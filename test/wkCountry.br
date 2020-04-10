@@ -1,0 +1,33 @@
+//------------------------------------
+// Wikipedia scraper
+// for Country pages
+//
+// @copyright drkameleon
+//------------------------------------
+
+country "#firstHeading"
+
+infobox {
+    capital "//th[contains(text(),'Capital')]/../td/a" \
+        prepend="{{country}}" \
+        trim=on \
+        replace="o||x" \
+        uppercase=on 
+
+    language "//th[contains(text(),'Official language')]/../td/a"
+
+    details {
+        currency "//th[contains(text(),'Currency')]/../td/a" \
+            select.include="/[A-Z]+/" \
+            select.match="Euro"
+
+        callingCode "//th/a[contains(text(),'Calling code')]/../../td"
+
+        drivingSide "//th/a[contains(text(),'Driving side')]/../../td" \
+            append="-->{{infobox.details.callingCode}}"
+
+        TLD "//th/a[contains(text(),'Internet TLD')]/../../td" \
+            append="_{{infobox.capital}}"
+    }
+
+}

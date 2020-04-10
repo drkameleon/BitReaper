@@ -1,0 +1,113 @@
+#!/usr/bin/env ruby
+#######################################################
+# BitReaper
+# Automated Web-Scraping Client for Ruby
+#
+# (c)2020 Yanis Zafirópulos 
+#         aka Dr.Kameleon
+#
+#         <yaniszaf@gmail.com>
+#######################################################
+# @file bin/bitreaper
+#######################################################
+
+require 'colorize'
+require 'optparse'
+
+require 'bitreaper'
+
+##########################################
+# ENTRY
+##########################################
+
+# Set defaults
+
+$url 		= ""
+$inputFile 	= ""
+$outputFile = "output.json"
+
+$verbose	= false
+
+# Parse command-line options
+
+ARGV.options do |opts|
+	opts.banner = "BitReaper v0.1.0\n".bold +
+				  "(c)2020 Dr.Kameleon\n\n"+
+				  "Usage: bitreaper <parser> [options]\n\n"
+
+  	opts.on("-iINPUT", "--input==INPUT",String,"Set input file") 	{|val| $inputFile = val }
+  	opts.on("-oOUTPUT", "--output=OUTPUT",String,"Set output file") {|val| $outputFile = val }
+  	opts.on("-uURL", "--url=URL",String,"Set single url input") 	{|val| $url = val }
+  	opts.on("-v", "--verbose", String, "Print debug messages")   	{|val| $verbose = true }
+  	opts.on_tail("-h", "--help","Show this help page")         		{ 
+  		puts opts
+  		puts ""
+  		exit
+  	}
+  	opts.parse!
+end
+
+# Check if everything is correct
+
+showError("Parser file not provided!\nexpected: bitreaper <parser> [options]") if ARGV.count == 0
+showError("Too many arguments provided!\nexpected: bitreaper <parser> [options]") if ARGV.count > 1
+showError("Both input file and single url provided!\nexpected: one of the two options") if $url!="" and $inputFile!=""
+
+$parserFile = ARGV[0]
+showError("Parser file does not exist!\npath given: #{$parserFile}") unless File.exist? $parserFile
+
+if $inputFile!=""
+	showError("Input file does not exist!\npath given: #{$inputFile}") unless File.exist? $inputFile
+end
+
+# Show our logo
+
+printLogo()
+
+# Read parser
+
+showInfo("reading parser: #{$parserFile}")
+$parser = BitReaper.getParser($parserFile)
+
+if $inputFile!=""
+
+	# Read urls
+	showInfo("reading urls: #{$inputFile}")
+	$urls = File.read($inputFile)
+	$urls = $urls.split("\n")
+
+	# Initial setup
+	$total = $urls.count
+	puts "\n"
+
+	# Process project
+	$store = []
+	$urls.each_with_index{|url,i|
+		br = BitReaper.new(url,$parser,i)
+		$store << br.process()
+	}
+
+	# Save store to file
+	saveStoreToFile($outputFile,$store)
+
+else
+
+	# Initial setup
+	$total = 1
+	puts "\n"
+
+	# Process single url
+	br = BitReaper.new($url,$parser,1)
+	$store = br.process()
+
+	# Save store to file
+	saveStoreToFile($outputFile,$store)
+
+end
+
+#######################################################
+#
+# This is the end;
+# my only friend, the end...
+#
+#######################################################
