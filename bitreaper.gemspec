@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'bitreaper'
-  s.version     = '0.1.0'
+  s.version     = '0.1.1'
   s.date        = '2020-04-09'
   s.summary     = "BitReaper"
   s.description = "Automated Web-Scraping Client for Ruby"
