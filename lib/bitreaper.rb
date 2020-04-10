@@ -46,7 +46,7 @@ class BitReaper
 	def self.getParser(file)
 		parserFile = File.read(file)
 		parserFile = parserFile.gsub(/([\w]+)\!\s/,'\1=on')
-		if true
+		if $verbose
 			puts parserFile.split("\n").map{|l| "   "+l}.join("\n").light_black
 			puts ""
 		end
