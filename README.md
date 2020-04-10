@@ -3,8 +3,7 @@ Automated Web-Scraping Client for Ruby
 
 ### Installation
 
-```gem install bitreaper
-```
+```gem install bitreaper```
 
 ### Usage
 
@@ -63,7 +62,7 @@ Simple:
 
 **And here's the output:**
 
-*(weird admittedly, but showcasing what BitReaper is capable of ;-)
+*(weird admittedly, but showcasing what BitReaper is capable of ;-)*
 
 ```json
 [
@@ -125,6 +124,8 @@ Simple:
   }
 ]
 ```
+
+----
 
 ### License
 
