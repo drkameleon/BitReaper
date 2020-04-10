@@ -7,7 +7,7 @@ Automated Web-Scraping Client for Ruby
 
 ### Usage
 
-*A sample parser file, let's call it `parser.br`:*
+**A sample parser file, let's call it `parser.br`:**
 
 ```sdl
 //------------------------------------
@@ -45,7 +45,7 @@ infobox {
 }
 ```
 
-*A sample input file, let's call it `input.lst`:*
+**A sample input file, let's call it `input.lst`:**
 
 ```
 https://en.wikipedia.org/wiki/Spain
