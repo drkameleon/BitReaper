@@ -66,8 +66,15 @@ def printProgress(item,indx,stage)
 			msg += "\n"
 	end
 
-	print "\r"
-	print " ► [#{indx+1}/#{$total}] ".bold + item.ellipsisize.light_magenta.underline + " ➔ " + msg
+	toPrint = (" ► " + "[#{indx+1}/#{$total}] ".ljust(12)).bold + item.ellipsisize.light_magenta.underline + " ➔ " + msg
+	if $parallel
+		if $verbose
+			puts toPrint
+		end
+	else
+		print "\r"
+		print toPrint
+	end
 end
 
 def saveStoreToFile(file,store)
