@@ -10,9 +10,14 @@
 # @file lib/bitreaper/helpers.rb
 #######################################################
 
+require 'down'
+require 'fileutils'
+
 ##########################################
 # HELPER FUNCTIONS
 ##########################################
+
+## Misc
 
 class String
 	def ellipsisize(minimum_length=15,edge_length=15)
@@ -21,7 +26,29 @@ class String
 		mid_length = self.length - edge_length*2
 		gsub(/(#{edge}).{#{mid_length},}(#{edge})/, '\1...\2')
 	end
+
+	def downloadAs(dest,filename=nil)
+		# make sure 'dest' path and any dir included in the filename path exist
+		FileUtils.mkdir_p dest unless Dir.exist? dest
+		if not filename.nil?
+			subdir = File.join(dest, File.dirname(filename))
+			FileUtils.mkdir_p subdir unless Dir.exist? subdir
+		end
+
+		# download it
+		tmpfile = Down.download(self)
+
+		# in case a filename is specified, save it like that
+		# otherwise, try using the original filaname
+		if not filename.nil?
+			FileUtils.mv(tmpfile.path, "#{dest}/#{filename}")
+		else
+			FileUtils.mv(tmpfile.path, "#{dest}/#{tmpfile.original_filename}")
+		end
+	end
 end
+
+## Core
 
 def printLogo
 	puts ("  ____  _ _   ____\n" +                           
