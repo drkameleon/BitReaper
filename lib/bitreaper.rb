@@ -26,13 +26,22 @@ require_relative 'bitreaper/helpers.rb'
 # SUPERGLOBALS
 ##########################################
 
-$bitreaper_version = 0.1
+$bitreaper_version = 0.1.2
 
-##########################################
-# MAIN CLASS
-##########################################
+####################################################################################
+# **MAIN CLASS**
+# This is the main Web Scraper object. It is through a `BitScraper` instance
+# that you can start scraping
+####################################################################################
 
 class BitReaper
+
+	# Create a new BitReaper instance
+	#
+	# @param [String] url The URL of the page to be scraped
+	# @param [String,SDL4R::Tag] parser The parser
+	# @param [Integer] i Index of the current operation (for reporting purposes)
+    #---------------------------------------------------------------------------
 	def initialize(url,parser,i=0)
 		@url = url
 		@parser = (parser.is_a? String) ? self.getParser(parser) : parser
@@ -43,6 +52,12 @@ class BitReaper
 		@noko = self.download(@url)
 	end
 
+	# Get a new parser from a given parser path
+	#
+	# @param [String] file The path of the `.br` parser file
+	#
+	# @return [SDL4R::Tag] The resulting parser
+    #---------------------------------------------------------------------------
 	def self.getParser(file)
 		parserFile = File.read(file)
 		parserFile = parserFile.gsub(/([\w]+)\!\s/,'\1=on')
@@ -54,12 +69,38 @@ class BitReaper
 		return SDL4R::read(parserFile)
 	end
 
+	# Process current project
+    #---------------------------------------------------------------------------
+	def process
+		printProgress(@url,@index,1)
+		processNode(@noko, @parser, @store)
+
+		printProgress(@url,@index,2)
+		return @store
+	end
+
+	private
+
+	# Download given URL
+	#
+	# @param [String] url The URL to be downloaded
+	#
+	# @return [Nokogiri::XML::NodeSet] The resulting nodes
+    #---------------------------------------------------------------------------
 	def download(url,withProgress=true)
 		printProgress(@url,@index,0) if withProgress
 
 		return Nokogiri::HTML(open(url))
 	end
 
+	# Process String value using attribute
+	#
+	# @param [String] attrb The attribute to be processed
+	# @param [String] val The value to processed
+	# @param [String] param The attribute's param (if any)
+	#
+	# @return [String,Array] The result of the operation
+    #---------------------------------------------------------------------------
 	def processStringValue(attrb,val,param)
 		case attrb
 			when "prepend"
@@ -80,10 +121,21 @@ class BitReaper
 				val = val.gsub(param,"")
 			when "split"
 				val = val.split(param)
+			when "download"
+				val = val
+				val.downloadAs($outputDest,(param.is_a? String) ? param : nil)
 		end
 		return val
 	end
 
+	# Process Array value using attribute
+	#
+	# @param [String] attrb The attribute to be processed
+	# @param [Array] val The value to processed
+	# @param [String] param The attribute's param (if any)
+	#
+	# @return [String,Array] The result of the operation
+    #---------------------------------------------------------------------------
 	def processArrayValue(attrb,val,param)
 		case attrb
 			when "join"
@@ -110,6 +162,13 @@ class BitReaper
 		return val
 	end
 
+	# Process parsed values using set of attributes
+	#
+	# @param [Array] values The parsed values
+	# @param [Array] attrbs The associated attributes
+	#
+	# @return [String,Array] The result of the operation
+    #---------------------------------------------------------------------------
 	def processValues(values,attrbs)
 		# check if we have a single value or an array of values
 		ret = (values.count==1) ? values[0].content
@@ -138,6 +197,13 @@ class BitReaper
 		return (ret.nil?) ? "" : ret
 	end
 
+	# Process a given node using provided parser and temporary storage hash
+	#
+	# @param [Nokogiri::XML::node] noko The Nokogiri node to work on
+	# @param [SDL4R::Tag] node The parser node
+	# @param [Hash] store The temporary storage hash
+	# @param [Integer] level The nesting level (for informational purposes)
+    #---------------------------------------------------------------------------
 	def processNode(noko,node,store,level=0)
 		node.children.each{|child|
 			command = child.namespace
@@ -163,14 +229,6 @@ class BitReaper
 				processNode(subnoko,child,store[tag],level+1)
 			end
 		}
-	end
-
-	def process
-		printProgress(@url,@index,1)
-		processNode(@noko, @parser, @store)
-
-		printProgress(@url,@index,2)
-		return @store
 	end
 
 end
