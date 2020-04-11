@@ -26,7 +26,7 @@ require 'bitreaper'
 
 $url 		= ""
 $inputFile 	= ""
-$outputFile = "output.json"
+$outputDest = "output"
 
 $parallel   = false
 $verbose	= false
@@ -39,7 +39,7 @@ ARGV.options do |opts|
 				  "Usage: bitreaper <parser> [options]\n\n"
 
   	opts.on("-iINPUT", "--input==INPUT",String,"Set input file") 	{|val| $inputFile = val }
-  	opts.on("-oOUTPUT", "--output=OUTPUT",String,"Set output file") {|val| $outputFile = val }
+  	opts.on("-oOUTPUT", "--output=OUTPUT",String,"Set output name") {|val| $outputDest = val }
   	opts.on("-uURL", "--url=URL",String,"Set single url input") 	{|val| $url = val }
   	opts.on("-p", "--parallel", "Perform multi-threaded processing"){|val| $parallel = true }
   	opts.on("-v", "--verbose", "Print debug messages")   			{|val| $verbose = true }
@@ -106,7 +106,7 @@ if $inputFile!=""
 	end
 
 	# Save store to file
-	saveStoreToFile($outputFile,$store)
+	saveStoreToFile("#{$outputDest}.json",$store)
 
 else
 
@@ -119,7 +119,7 @@ else
 	$store = br.process()
 
 	# Save store to file
-	saveStoreToFile($outputFile,$store)
+	saveStoreToFile("#{$outputDest}.json",$store)
 
 end
 
