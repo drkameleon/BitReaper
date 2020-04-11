@@ -7,6 +7,11 @@
 
 country "#firstHeading"
 
+flag "//img[contains(@class, 'thumbborder')]/@src" \
+    first=on \
+    prepend="http:" \
+    download="flags/{{country}}.png"
+
 infobox {
     capital "//th[contains(text(),'Capital')]/../td/a" \
         prepend="{{country}}" \
