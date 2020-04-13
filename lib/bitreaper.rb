@@ -242,32 +242,41 @@ class BitReaper
 	def processNode(noko,node,store,level=0)
 		node.children.each{|child|
 			command = child.namespace
-			tag = child.name
+			tag = Liquid::Template.parse(child.name).render(@store)
 			pattern = child.values[0]
 			attrs = child.attributes
 
-			if child.children.count==0
-				# no children, so it's a "get"
-				values = noko.search(pattern)
-
-				if values.count>0
-					processed = self.processValues(values,attrs)
-					if processed!=false
-						store[tag] = processed
-					end
+			if not command==""
+				case tag
+					when "fetch"
+						gotoUrl = Liquid::Template.parse(pattern).render(@store)
+						br = BitReaper.new(gotoUrl,child)
+						store.merge! br.process()
 				end
 			else
-				# it's a "section"
-				store[tag] = {}
+				if child.children.count==0
+					# no children, so it's a "get"
+					values = noko.search(pattern)
 
-				if pattern.nil?
-					subnoko = noko
+					if values.count>0
+						processed = self.processValues(values,attrs)
+						if processed!=false
+							store[tag] = processed
+						end
+					end
 				else
-					subnoko = noko.search(pattern)
-				end
+					# it's a "section"
+					store[tag] = {}
 
-				processNode(subnoko,child,store[tag],level+1)
-				store[tag] = self.processValues(store[tag],attrs)
+					if pattern.nil?
+						subnoko = noko
+					else
+						subnoko = noko.search(pattern)
+					end
+
+					processNode(subnoko,child,store[tag],level+1)
+					store[tag] = self.processValues(store[tag],attrs)
+				end
 			end
 		}
 	end
