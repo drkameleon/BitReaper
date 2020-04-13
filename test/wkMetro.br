@@ -3,6 +3,8 @@ title "#firstHeading"
 metro "//table[1]//tr" list! {
 	name ".//td[1]"
 	country ".//td[2]"
-	population ".//td[3]"
-	eurostat ".//td[4]"
+	info {
+		population ".//td[3]"
+		eurostat ".//td[4]"
+	}
 }
