@@ -48,6 +48,12 @@ class String
 	end
 end
 
+def squish(h)
+	keys = h.keys.map(&:to_s)
+	arrayMin = h.values.map{|v| v.count}.min
+	h.values.map{|v| v.first(arrayMin)}.transpose.map { |a| keys.zip(a).to_h }
+end
+
 ## Core
 
 def printLogo
