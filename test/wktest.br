@@ -1,0 +1,34 @@
+//------------------------------------
+// Wikipedia scraper
+// for Country pages
+//
+// @copyright drkameleon
+//------------------------------------
+
+country "#firstHeading"
+
+flag "//img[contains(@class, 'thumbborder')]/@src" {
+    get:first
+    do:prepend "http:"
+    do:download "flags/{{country.png}}"
+    do:exclude
+}
+
+infobox as:section=on {
+
+    capital "//th[contains(text(),'Capital')]/../td/a" {
+        do:prepend "{{country}}"
+        do:trim
+        do:replace "o" "x"
+        do:uppercase
+    }
+
+    language "//th[contains(text(),'Official language')]/../td/a"
+
+    details {
+        currency "//th[contains(text(),'Currency')]/../td/a" {
+            select:include "/[A-Z]+/"
+            select:match "Euro"
+        }
+    }
+}
