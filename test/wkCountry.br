@@ -8,16 +8,17 @@
 country "#firstHeading"
 
 flag "//img[contains(@class, 'thumbborder')]/@src" \
-    first=on \
+    first! \
     prepend="http:" \
-    download="flags/{{country}}.png"
+    download="flags/{{country}}.png" \
+    exclude!
 
 infobox {
     capital "//th[contains(text(),'Capital')]/../td/a" \
         prepend="{{country}}" \
-        trim=on \
+        trim! \
         replace="o||x" \
-        uppercase=on 
+        uppercase! 
 
     language "//th[contains(text(),'Official language')]/../td/a"
 

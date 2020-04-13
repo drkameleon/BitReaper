@@ -1,0 +1,23 @@
+//-------------------------------------------------
+// Wikipedia scraper
+// Geography::Country
+//
+// @version 0.2
+// @copyright drkameleon
+//-------------------------------------------------
+
+country     "#firstHeading"
+flag        "img.thumbborder/@src" first! \
+                                   prepend="http:" \
+                                   download="{{country}}.png" \
+                                   exclude!
+
+info "table.infobox.geography.vcard" {
+    capital     ".//th[contains(text(),'Capital')]/../td/a"
+    language    ".//th[contains(text(),'Official')]/../td/a"
+
+    driving     ".//th/a[contains(text(),'Driving')]/../../td"
+    callCode    ".//th/a[contains(text(),'Calling')]/../../td"
+    tld         ".//th/a[contains(text(),'TLD')]/../../td/a" join=", " \
+                                                             uppercase!
+}
