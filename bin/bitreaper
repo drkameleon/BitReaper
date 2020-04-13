@@ -93,7 +93,7 @@ if $inputFile!=""
 		}
 	else
 		if not $verbose	
-			Parallel.each_with_index($urls, in_threads: 4, progress: " ► Processing... "){|url,i|
+			Parallel.each_with_index($urls, in_threads: 6, progress: " ► Processing... "){|url,i|
 				br = BitReaper.new(url,$parser,i)
 				$store << br.process()
 			}
