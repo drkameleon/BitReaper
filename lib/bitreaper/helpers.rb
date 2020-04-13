@@ -48,10 +48,14 @@ class String
 	end
 end
 
-def squish(h)
-	keys = h.keys.map(&:to_s)
-	arrayMin = h.values.map{|v| v.count}.min
-	h.values.map{|v| v.first(arrayMin)}.transpose.map { |a| keys.zip(a).to_h }
+def squish(ha)
+	h = ha
+	h.each{ |key,val| 
+		if not val.nil? and val.is_a? Hash
+			h[key] = squish(val)
+		end
+	}
+	h.values.then { |a, *b| a.zip *b }.map { |e| (h.keys.zip e).to_h }
 end
 
 ## Core
