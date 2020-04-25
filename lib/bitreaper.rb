@@ -20,7 +20,7 @@ require 'sdl4r'
 
 require_relative 'bitreaper/helpers.rb'
 
-$bitreaper_version = "0.1.4"
+$bitreaper_version = "0.1.5"
 
 ##
 # This is the main Web Scraper object. It is through a `BitScraper` instance
@@ -242,16 +242,21 @@ class BitReaper
 	def processNode(noko,node,store,level=0)
 		node.children.each{|child|
 			command = child.namespace
-			tag = Liquid::Template.parse(child.name).render(@store)
-			pattern = child.values[0]
+			tag = child.name
+			pattern = child.values[0] #Liquid::Template.parse(child.values[0]).render(@store)
 			attrs = child.attributes
 
 			if not command==""
-				case tag
-					when "fetch"
-						gotoUrl = Liquid::Template.parse(pattern).render(@store)
-						br = BitReaper.new(gotoUrl,child)
-						store.merge! br.process()
+				case command
+					when "do"
+						case tag
+							when "fetch"
+							gotoUrl = Liquid::Template.parse(pattern).render(@store)
+							br = BitReaper.new(gotoUrl,child)
+							store.merge! br.process()
+						end
+					when "define"
+						@store[tag] = pattern
 				end
 			else
 				if child.children.count==0

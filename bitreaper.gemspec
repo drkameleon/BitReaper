@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'bitreaper'
-  s.version     = '0.1.4'
-  s.date        = '2020-04-09'
+  s.version     = '0.1.5'
+  s.date        = '2020-04-13'
   s.summary     = "BitReaper"
   s.description = "Automated Web-Scraping Client for Ruby using SLD2-like configuration files. Supports XPath and CSS selectors via Nokogiri."
   s.authors     = ["Dr.Kameleon"]
